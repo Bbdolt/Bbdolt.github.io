@@ -4,6 +4,73 @@
   
     
     <entry>
+      <title>第四篇</title>
+      <link href="/2024/10/13/%E7%AC%AC%E5%9B%9B%E7%AF%87/"/>
+      <url>/2024/10/13/%E7%AC%AC%E5%9B%9B%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>用简单的方法解决phpstudy中的mysql与本地mysql冲突问题</title>
+      <link href="/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/"/>
+      <url>/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[<p><strong>目录</strong></p><p><a href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86%EF%BC%9A">前置知识：</a></p><p><a href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A">方法一：</a></p><p><a href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A">方法二：</a></p><hr><h2 id="前置知识："><a href="#前置知识：" class="headerlink" title="前置知识："></a><strong>前置知识：</strong></h2><p>我们首先要知道phpstudy中的mysql与本地的mysql有哪些冲突，首先是端口都是3306冲突了，其次可能是服务名相同导致了冲突。</p><h3 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a><strong>方法一：</strong></h3><p>只改变服务名程，但是两者不能同时启动</p><p>1、win + s，搜索Mysql Installer -community并点击进入</p><p><img src="/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/1.png"></p><p>2、点击Reconifgure，进入后一直点击next并输入密码验证，直到到了Widows Service这个选项，将服务的名称修改为不是MySQL就行。例如：MySQL8.</p><p><img src="/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/2.png"></p><p>3、然后next，点击finsh即可。</p><p>4、win + r，输入services.msc，找到MySQL8，右键点击属性，叫启动类型修改为手动。</p><p>5、win + r，输入cmd，点击Ctrl + shift + 回车，进入管理员命令界面。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net start MySQL8        //启动本地MySQL服务</span><br><span class="line">net stop MySQL8         //关闭本地MySQL服务</span><br></pre></td></tr></table></figure><h3 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a><strong>方法二：</strong></h3><p>改变phpstudy的端口为3307，且改变本地mysql的服务名。</p><p>1、按照第一部方法，修改本地mysql的服务名。</p><p>2、打开phpstudy，修改端口</p><p><img src="/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/3.png"></p><p><img src="/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/4.png"></p><p>3、即可两个mysql同时启动了</p><p><img src="/2024/10/13/%E7%AC%AC%E4%B8%89%E7%AF%87/5.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> phpstudy </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Vmware中Linux虚拟机如何扩容</title>
+      <link href="/2024/10/13/linux/"/>
+      <url>/2024/10/13/linux/</url>
+      
+        <content type="html"><![CDATA[<h2 id="理解挂载点和分区的关系"><a href="#理解挂载点和分区的关系" class="headerlink" title="理解挂载点和分区的关系"></a>理解挂载点和分区的关系</h2><p>在 Linux 系统中，挂载点（Mount Point）与分区（Partition）是文件系统管理中的两个核心概念，它们之间的关系如下：</p><ol><li><p><strong>分区</strong>：</p><ul><li>分区是指硬盘驱动器上的连续空间，它被划分为独立的区域，每个区域可以用来存储数据。</li><li>分区可以是主分区或扩展分区，扩展分区可以进一步划分为逻辑分区。</li><li>分区通常使用文件系统类型，如 ext4、NTFS、FAT32 等，这些文件系统决定了数据如何在分区上被组织和访问。</li></ul></li><li><p><strong>挂载点</strong>：</p><ul><li>挂载点是文件系统中的一个目录，它是已存在的一个空目录，用来作为分区或其他存储设备（如 USB 闪存驱动器、光盘等）与 Linux 文件系统树的连接点。</li><li>当一个分区被挂载到一个挂载点时，分区上的文件和目录就可以通过挂载点来访问。</li><li>在 Linux 系统中，挂载点可以是任何目录，但通常会在 <code>/mnt</code>、<code>/media</code> 或 <code>/var</code> 等目录下为不同的存储设备创建特定的挂载点。</li></ul></li></ol><p>简单来说：</p><p>例如，一个常见的 Linux 系统分区布局可能包括：</p><ul><li><code>/dev/sda1</code>：根分区（<code>/</code>），挂载到根目录 <code>/</code></li><li><code>/dev/sda2</code>：交换分区（swap），不被直接挂载，而是用于虚拟内存</li><li><code>/dev/sda3</code>：家目录分区（<code>/home</code>），挂载到 <code>/home</code></li><li><code>/dev/sda4</code>：数据分区（<code>/data</code>），挂载到 <code>/data</code></li></ul><h2 id="以Centos举例"><a href="#以Centos举例" class="headerlink" title="以Centos举例"></a>以Centos举例</h2><p>首先确保你的虚拟机，没有快照如果有快照是不能进行扩容的，需要将快照删除掉。</p><p><img src="/2024/10/13/linux/1.png"><br>先给虚拟机分配存储空间，这一步并不意味这你扩容成功了，还需要挂载到目录下，可以理解是windows中的未分配存储空间。</p><p><img src="/2024/10/13/linux/2.png"></p><h3 id="查看分区"><a href="#查看分区" class="headerlink" title="查看分区"></a>查看分区</h3><p>利用gparted命令，查看存储空间的情况（没有的话执行sudo apt install gparted<br>安装以下，这是一个图形化的工具）</p><p><img src="/2024/10/13/linux/3.png"></p><p>可以看到&#x2F;dev&#x2F;sda就是我们总的存储空间一共有51GB，跟我们设置的一样，但是还不能使用。（每个人的图可能都不样，但是原理是一样的，把中间的全部删除，合并到未分配），&#x2F;dev&#x2F;sda2挂载到了&#x2F;根目录下，大小为48.41GB。&#x2F;dev&#x2F;sda3是linux的交换区，如果没有的话开机会很慢。至于大小可以给1GB（如果存储空间很多的话）或500MB以上。</p><h3 id="进行分配"><a href="#进行分配" class="headerlink" title="进行分配"></a>进行分配</h3><p>那么先要做的就是将未分配的存储添加到&#x2F;dev&#x2F;sda2中但是它们之间隔了交换区那么就根windows一样要想合并那么就必须是两个相邻的盘，才能合并到一块。</p><p>1、右键交换区，选择停用交换空间</p><p>2、右键交换区，选择删除</p><p><img src="/2024/10/13/linux/4.png"></p><p>3、原本的交换区就会合并到未分配区。</p><p>4、右键红色1位置，选择更换大小，就可以将&#x2F;dev&#x2F;sda2进行扩容了，可以输入数据改变大小，或者拉动上面的条条左右移动，向右移扩容，确定好后点击调整大小即可。</p><p><img src="/2024/10/13/linux/5.png"></p><p>5、点击对勾，执行操作。</p><p><img src="/2024/10/13/linux/6.png"></p><p>6、如果你的分区和我不一样，我们还要确保&#x2F;etc&#x2F;fstab文件内容中，每个分区的UUID是正确的。</p><p>什么是&#x2F;etc&#x2F;fstab文件？什么是UUID？</p><p>在 Linux 系统中，<code>/etc/fstab</code>（文件系统表）是一个重要的配置文件，它列出了系统启动时应该自动挂载的文件系统。UUID（Universally Unique Identifier，通用唯一识别码）是一个用于标识信息的 128 位数字，简单来说就是每个分区唯一的标识。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> blkid              //查看真实UUID</span><br><span class="line"></span><br><span class="line">vim /etc/fstab          //修改配置文件，将UUID设置正确</span><br></pre></td></tr></table></figure><p>可以看到我们挂载到&#x2F;根目录和&#x2F;boot的UUID，是没问题的，我这里还有一个swap，后面会配置，只要修改它的UUID即可。现在先不用管，主要看你扩容的分区对应的UUID是不是正确的。</p><p><img src="/2024/10/13/linux/7.png"></p><p>这样就完成了扩容，但是如果不配置交换区的话，开机会很慢（当然还有别的不好）。</p><h3 id="配置交换区"><a href="#配置交换区" class="headerlink" title="配置交换区"></a>配置交换区</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- 先利用fdisk /dev/sda                  //使用 `fdisk` 命令打开磁盘 `/dev/sda`</span><br><span class="line">- 创建一个新分区sda3                   //一直回车即可</span><br><span class="line">- 将新创建的分区类型设置为 Linux Swap。按下 `t` 键，选择新创建的分区，然后输入对应的类型代码 `82`</span><br><span class="line">- 将分区标记为交换分区。按下 `p` 键查看分区表，记下你所创建的分区名称（例如 `/dev/sda2`），之后按下 `w` 键保存更改并退出 `fdisk`</span><br><span class="line">- 然后开始设置交换分区，  输入命令`mkswap /dev/sda2`</span><br></pre></td></tr></table></figure><p>1、先利用fdisk &#x2F;dev&#x2F;sda                  &#x2F;&#x2F;使用 fdisk 命令打开磁盘 &#x2F;dev&#x2F;sda</p><p><img src="/2024/10/13/linux/8.png"></p><p>2、新建分区sda3</p><p><img src="/2024/10/13/linux/9.png"></p><p>        输入 <code>p</code> 命令将显示当前磁盘的分区信息</p><p>        n命令新建分区</p><p>        选择p创建一个主分区</p><p>        之后一直回车就好（默认剩余空间全部用来当作交换区）</p><p>3、将新建的分区</p><p><img src="/2024/10/13/linux/10.png"></p><p>        命令t为分区设置system id（区分作用的）。</p><p>        选择3，也就是新建准备作为交换区的分区。</p><p>        82是分区类型代码 <code>82</code> 代表交换分区（Linux Swap）。</p><p>        w命令保存。</p><p>4、配置UUID。</p><p><img src="/2024/10/13/linux/11.png"></p><p>        mkswap &#x2F;dev&#x2F;sda3                                     &#x2F;&#x2F;设置交换分区，设置UUID</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fstab                    //修改配置文件</span><br></pre></td></tr></table></figure><p>        这里只修改了第三个swap，如果发现sudo blkid显示出来的UUID和文件里的不一样，那可能是你之前配置有误，修改文件中UUID即可。</p><p><img src="/2024/10/13/linux/12.png"></p><p>        这样就配置好了，当然弄懂上面的原理也可将，新建分区挂载到不同的目录下也行，比如一个新建目录的&#x2F;download，那么你的分区&#x2F;dev&#x2F;sda4（不一定是4，看你新建的是哪个分区）多大，你的&#x2F;download就能放多大的文件。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Vmware </tag>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>WSL2子系统如何设置桥接和静态ip</title>
       <link href="/2024/10/13/wsl/"/>
       <url>/2024/10/13/wsl/</url>
@@ -11,6 +78,22 @@
         <content type="html"><![CDATA[<h2 id="利用Hyper-V创建一个虚拟交换机"><a href="#利用Hyper-V创建一个虚拟交换机" class="headerlink" title="利用Hyper-V创建一个虚拟交换机"></a>利用Hyper-V创建一个虚拟交换机</h2><p>点击 win + s，搜索Hyper-V管理器，点击进去。</p><p><img src="/2024/10/13/wsl/1.png"><br>点击“虚拟交换机管理器”。</p><p><img src="/2024/10/13/wsl/2.png"><br>类型选择“外部”，点击创建虚拟交换机。</p><p><img src="/2024/10/13/wsl/3.png"><br>输入名称，和你所用的网卡，配置完成后，点击应用、确定。</p><p><img src="/2024/10/13/wsl/4.png">​<br>（1）第一次创建，遇到创建不了的问题</p><p><img src="/2024/10/13/wsl/5.png"><br>解决方法<br>首先找到控制面板 -&gt; 查看网络状态和任务 -&gt; 更改适配器设置 -&gt; 找到WLAN（如果不是连接的WIFI，以太网也一样）-&gt; 找到共享选项全部关闭（把勾取消掉）</p><p><img src="/2024/10/13/wsl/6.png"><br>（2）之前有过现在删除重新创建<br><img src="/2024/10/13/wsl/7.png"><br>解决方法<br>win + r 输入control，进入控制面板 -&gt; 查看网络状态和任务 -&gt; 更改适配器设置 -&gt; 找到WLAN（如果不是连接的WIFI，以太网也一样）-&gt; 将Hyper-V可拓展的虚拟机交换机给取消。<br><img src="/2024/10/13/wsl/8.png"></p><h2 id="wslconfig配置文件"><a href="#wslconfig配置文件" class="headerlink" title=".wslconfig配置文件"></a>.wslconfig配置文件</h2><p><code>.wslconfig</code> 是一个用于配置 Windows Subsystem for Linux (WSL) 的配置文件。<code>.wslconfig</code> 文件提供了对 WSL 2 的全局配置选项。这个文件在%Userprofile%（C:\用户\用户名）目录下，如果没有就创建一个。<br>配置信息如下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">; 这是 WSL 2 的配置文件</span><br><span class="line"></span><br><span class="line">[wsl2]</span><br><span class="line">processors=4                            ; 设置 WSL 2 可以使用的最大 CPU 核心数为 4，自行修改</span><br><span class="line">memory=4GB                              ; 设置 WSL 2 可以使用的最大内存量为 4 GB，自行修改</span><br><span class="line">swap=4GB                                ; 设置 WSL 2 的交换空间大小为 4 GB，自行修改</span><br><span class="line">localhostForwarding=<span class="literal">true</span>                ; 允许本地主机转发</span><br><span class="line">networkingMode=bridged                  ; 设置网络模式为桥接模式</span><br><span class="line">vmSwitch=WSL                            ; 指定使用的虚拟交换机为 <span class="string">&quot;WSL&quot;</span>，这里填虚拟交换机的名称</span><br><span class="line">ipv6=<span class="literal">true</span>                               ; 启用 IPv6 支持</span><br><span class="line">dhcp=<span class="literal">false</span>                              ; 禁用 DHCP，手动设置网络配置</span><br><span class="line"></span><br><span class="line">[experimental]</span><br><span class="line">autoMemoryReclaim=gradual               ; 慢慢回收内存</span><br><span class="line">autoProxy=<span class="literal">true</span>                          ; 启用自动代理设置</span><br></pre></td></tr></table></figure><h2 id="etc-netplan目录下生成-yaml文件"><a href="#etc-netplan目录下生成-yaml文件" class="headerlink" title="&#x2F;etc&#x2F;netplan目录下生成*.yaml文件"></a>&#x2F;etc&#x2F;netplan目录下生成*.yaml文件</h2><p>完成以上两步（虽然已经是桥接模式但是WSL2子系统的ip不是固定的，而且可能会与宿主主机的ip相同，那么你在子系统开启的服务，例如：8989端口开启了http服务，那么你在主机是访问不到这个服务的），所以我们还要进一步配置。</p><p>在 Linux 系统中，<code>/etc/netplan</code> 目录下的 <code>.yaml</code> 文件是用于配置网络设置的。</p><p>首先进入，Linux子系统中，输入以下命令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@LAPTOP-GUB0QBS8:/# <span class="built_in">cd</span> /etc/netplan</span><br><span class="line">root@LAPTOP-GUB0QBS8:/etc/netplan# <span class="built_in">ls</span></span><br><span class="line">zwy.yaml                                                 //这里之前已经创建过了</span><br><span class="line">root@LAPTOP-GUB0QBS8:/etc/netplan# <span class="built_in">touch</span> xxx.yaml</span><br><span class="line">root@LAPTOP-GUB0QBS8:/etc/netplan# <span class="built_in">ls</span></span><br><span class="line">xxx.yaml  zwy.yaml</span><br><span class="line">root@LAPTOP-GUB0QBS8:/etc/netplan# nano xxx.yaml         //进行编辑</span><br></pre></td></tr></table></figure><p>编辑内容为：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">network:</span><br><span class="line">  version: 2</span><br><span class="line">  ethernets:</span><br><span class="line">    eth0:</span><br><span class="line">      dhcp4: no</span><br><span class="line">      addresses:</span><br><span class="line">        - 192.168.1.223/24   <span class="comment"># 设置一个不与主机相同的IP地址</span></span><br><span class="line">      gateway4: 192.168.1.1  <span class="comment"># 设置网关地址</span></span><br><span class="line">      nameservers:           <span class="comment">#dns服务，这下面可以跟我一样</span></span><br><span class="line">          addresses:</span><br><span class="line">              - 8.8.8.8</span><br><span class="line">              - 8.8.4.4</span><br><span class="line">              - 223.5.5.5  <span class="comment"># 添加中国移动公共DNS服务器地址</span></span><br><span class="line">              - 223.6.6.6  <span class="comment"># 添加中国移动公共DNS服务器地址</span></span><br></pre></td></tr></table></figure><h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>查看，Linux子系统的ip（这样就配置完成了），且如果用Vmware创建的虚拟机是桥接模式，它们之间是可以相互ping通的。<br><img src="/2024/10/13/wsl/9.png"></p><p>这里还用关于WSL一些操作的笔记，可以下来看看，用的Xmind这款软件做的笔记。<br><a href="https://www.123pan.com/s/WK4vTd-dapn.html" title="https://www.123pan.com/s/WK4vTd-dapn.html">https://www.123pan.com/s/WK4vTd-dapn.html</a></p>]]></content>
       
       
+      <categories>
+          
+          <category> Others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> WSL2 </tag>
+            
+            <tag> Hyper-V </tag>
+            
+            <tag> 静态ip </tag>
+            
+        </tags>
       
     </entry>
     
