@@ -4,6 +4,89 @@
   
     
     <entry>
+      <title>Day4 pyinstaller解包方法（羊城杯login）</title>
+      <link href="/2024/10/27/%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AF%87/"/>
+      <url>/2024/10/27/%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> Reverse </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Pyinstaller </tag>
+            
+            <tag> 羊城杯 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Day3 网鼎杯2020 bang（Android逆向教学）</title>
+      <link href="/2024/10/24/%E7%AC%AC%E5%8D%81%E7%AF%87/"/>
+      <url>/2024/10/24/%E7%AC%AC%E5%8D%81%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[<h4 id="安装frida、frida-tools、frida-dexdump"><a href="#安装frida、frida-tools、frida-dexdump" class="headerlink" title="安装frida、frida-tools、frida-dexdump"></a>安装frida、frida-tools、frida-dexdump</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip install frida</span><br><span class="line">pip install frida-tools</span><br><span class="line">pip install frida-dexdump</span><br><span class="line"></span><br><span class="line">如果网络环境不好，可以加 -i https://pypi.doubanio.com/simple/ --trusted-host pypi.doubanio.com 指定国内源</span><br></pre></td></tr></table></figure><h4 id="查壳工具"><a href="#查壳工具" class="headerlink" title="查壳工具"></a>查壳工具</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Apkcheck：https://github.com/moyuwa/ApkCheckPack/</span><br><span class="line"></span><br><span class="line">使用参数-s=true（默认false）开启全文件硬编码信息扫描</span><br><span class="line">ApkCheckPack.exe -s=false -f &lt;apk文件路径&gt;</span><br></pre></td></tr></table></figure><p><img src="/2024/10/24/%E7%AC%AC%E5%8D%81%E7%AF%87/1.png"></p><h4 id="配置frida-server"><a href="#配置frida-server" class="headerlink" title="配置frida-server"></a>配置frida-server</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1、首先找一个真机或模拟器，安装好目标应用，并打开开发者选项，开启USB调试；</span><br><span class="line">2、如果是模拟器，配置好USB调试后，找到模拟器的adb.exe位置，在这个目录下打开cmd，输入adb devices，查看是否连接成功；</span><br><span class="line">3、利用 adb shell 命令，进入手机的shell环境，输入 getprop ro.product.cpu.abi 查看手机框架，我是 x86_64</span><br><span class="line">4、回到windows，利用 pip list | findstr frida* 查看frida的版本，我这里是 16.5.6</span><br><span class="line">5、所以我要下载 frida-server-16.5.6-android-x86_64.xz 文件，地址：https://github.com/frida/frida/releases</span><br><span class="line">6、解压后，在 cmd 里输入 adb push frida-server /data/local/tmp/，把 frida-server 上传到手机的 /data/local/tmp/ 目录下</span><br><span class="line">7、在 手机的shell环境中，输入 cd /data/local/tmp/，然后输入 chmod 777 frida-server，赋予执行权限，如果显示 Permission denied 则需要先输入 su 切换到 root 用户</span><br><span class="line">8、然后运行 frida-server，输入 ./frida-server，等待连接成功</span><br></pre></td></tr></table></figure><h4 id="脱壳"><a href="#脱壳" class="headerlink" title="脱壳"></a>脱壳</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1、在模拟器中，脱壳的app</span><br><span class="line">2、利用 APK Extractor pro 的app或其他方法，查看app的包名，例如本题的包名是 com.example.how_debug</span><br><span class="line">3、回到windows，进入python环境，输入 frida-ps -U，查看手机上运行的frida-server进程</span><br><span class="line">4、利用 frida-dexdump -U -f com.example.how_debug -d -o ./com.example.how_debug，com.xxx.xxx是程序的包名，脱壳后文件保存在当前目录下的包名文件</span><br><span class="line">5、这样com.example.how_debug目录下就会有很多dex文件</span><br></pre></td></tr></table></figure><h4 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h4><p>这里用到一个python反编译合并脚本，根据配置一下三个路径即可，然后运行脚本即可<br><img src="/2024/10/24/%E7%AC%AC%E5%8D%81%E7%AF%87/2.png"></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">rename_class</span>(<span class="params">path</span>):</span><br><span class="line">    files = os.listdir(path)</span><br><span class="line">    dex_index = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> path.endswith(<span class="string">&#x27;/&#x27;</span>):</span><br><span class="line">        path = path[:-<span class="number">1</span>]</span><br><span class="line">        <span class="built_in">print</span>(path)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(files)):</span><br><span class="line">        <span class="keyword">if</span> files[i].endswith(<span class="string">&#x27;.dex&#x27;</span>):</span><br><span class="line">            old_name = path + <span class="string">&#x27;/&#x27;</span> + files[i]</span><br><span class="line">            <span class="keyword">if</span> dex_index == <span class="number">0</span>:</span><br><span class="line">                new_name = path + <span class="string">&#x27;/&#x27;</span> + <span class="string">&#x27;classes.dex&#x27;</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                new_name = path + <span class="string">&#x27;/&#x27;</span> + <span class="string">&#x27;classes%d.dex&#x27;</span> % dex_index</span><br><span class="line">            dex_index += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> os.path.exists(new_name):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            os.rename(old_name, new_name)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;[*] 重命名完毕&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extract_META_INF_from_apk</span>(<span class="params">apk_path, target_path</span>):</span><br><span class="line">    r = zipfile.is_zipfile(apk_path)</span><br><span class="line">    <span class="keyword">if</span> r:</span><br><span class="line">        fz = zipfile.ZipFile(apk_path, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> file <span class="keyword">in</span> fz.namelist():</span><br><span class="line">            <span class="keyword">if</span> file.startswith(<span class="string">&#x27;META-INF&#x27;</span>):</span><br><span class="line">                fz.extract(file, target_path)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;[-] %s 不是一个APK文件&#x27;</span> % apk_path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">zip_dir</span>(<span class="params">dirname, zipfilename</span>):</span><br><span class="line">    filelist = []</span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(dirname):</span><br><span class="line">        <span class="keyword">if</span> dirname.endswith(<span class="string">&#x27;.dex&#x27;</span>):</span><br><span class="line">            filelist.append(dirname)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(dirname):</span><br><span class="line">            <span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> dirs:</span><br><span class="line">                <span class="comment"># if dir == &#x27;META-INF&#x27;:</span></span><br><span class="line">                <span class="comment"># print(&#x27;dir:&#x27;, os.path.join(root, dir))</span></span><br><span class="line">                filelist.append(os.path.join(root, <span class="built_in">dir</span>))</span><br><span class="line">            <span class="keyword">for</span> name <span class="keyword">in</span> files:</span><br><span class="line">                <span class="comment"># print(&#x27;file:&#x27;, os.path.join(root, name))</span></span><br><span class="line"></span><br><span class="line">                filelist.append(os.path.join(root, name))</span><br><span class="line"></span><br><span class="line">    z = zipfile.ZipFile(zipfilename, <span class="string">&#x27;w&#x27;</span>, zipfile.ZIP_DEFLATED)</span><br><span class="line">    <span class="keyword">for</span> tar <span class="keyword">in</span> filelist:</span><br><span class="line">        arcname = tar[<span class="built_in">len</span>(dirname):]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&#x27;META-INF&#x27;</span> <span class="keyword">in</span> arcname <span class="keyword">or</span> arcname.endswith(<span class="string">&#x27;.dex&#x27;</span>)) <span class="keyword">and</span> <span class="string">&#x27;.DS_Store&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> arcname:</span><br><span class="line">            <span class="comment"># print(tar + &quot; --&gt;rar: &quot; + arcname)</span></span><br><span class="line">            z.write(tar, arcname)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;[*] APK打包成功，你可以拖入APK进行分析啦！&#x27;</span>)</span><br><span class="line">    z.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    args = &#123;</span><br><span class="line">        <span class="string">&#x27;dex_path&#x27;</span>: <span class="string">&#x27;./files/com.example.how_debug&#x27;</span>,  <span class="comment"># 脱壳后dex路径</span></span><br><span class="line">        <span class="string">&#x27;apk_path&#x27;</span>: <span class="string">&#x27;./signed.apk&#x27;</span>,  <span class="comment"># 原始带壳apk路径</span></span><br><span class="line">        <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;./apk/output.apk&#x27;</span>  <span class="comment"># 脱壳后apk路径</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    rename_class(args[<span class="string">&#x27;dex_path&#x27;</span>])</span><br><span class="line">    extract_META_INF_from_apk(args[<span class="string">&#x27;apk_path&#x27;</span>], args[<span class="string">&#x27;dex_path&#x27;</span>])</span><br><span class="line">    zip_dir(args[<span class="string">&#x27;dex_path&#x27;</span>], args[<span class="string">&#x27;output&#x27;</span>])</span><br></pre></td></tr></table></figure><h4 id="拖入jadx中分析"><a href="#拖入jadx中分析" class="headerlink" title="拖入jadx中分析"></a>拖入jadx中分析</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">jadx下载地址：https://github.com/skylot/jadx/releases</span><br><span class="line">可以下这个不用配置java环境 jadx-gui-1.5.0-with-jre-win.zip</span><br><span class="line"></span><br><span class="line">1、打开 jadx-gui-1.5.0-with-jre-win\jadx-gui-1.5.0.exe，将合并后的apk文件直接拖入分析</span><br><span class="line">2、源代码 -&gt; com -&gt; example.how_debug -&gt; MainActivity 找到主界面，就可以看到flag</span><br><span class="line">3、或者直接全局文本搜索 flag&#123; 也可看到flag</span><br></pre></td></tr></table></figure><p><img src="/2024/10/24/%E7%AC%AC%E5%8D%81%E7%AF%87/3.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Reverse </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Android逆向 </tag>
+            
+            <tag> frida </tag>
+            
+            <tag> jadx </tag>
+            
+            <tag> 网鼎杯 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Matlab 2024a安装及破解</title>
+      <link href="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/"/>
+      <url>/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[<p>1、解压压缩包<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/1.png"></p><p>2、解压后会得到三个文件<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/2.png"><br>3、解压iso文件<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/3.png"></p><p>4、解压后，以管理员身份打开setup.exe<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/4.png"><br>5、在输入文件安装密钥输入：21471-07182-41807-00726-32378-34241-61866-60308-44209-03650-51035-48216-24734-36781-57695-35731-64525-44540-57877-31100-06573-50736-60034-42697-39512-63953，点击“下一步”<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/5.png"><br>6、点击“浏览”，在解压后的文件夹Matlab 2024a文件夹中的【Crack】文件夹，选中license.lic文件，点击“打开”，然后点击“下一步”<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/6.png"><br>7、选择软件安装路径，点击“下一步”<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/7.png"><br>8、选择需要的然后点击“下一步”（这里默认全选了）<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/8.png"><br>9、然后无脑下一步就行了（断网也能下），请耐心等待，安装完成后点击“关闭”<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/9.png"><br>10、双击打开【Crack】文件夹<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/10.png"><br>11、复制【bin】文件夹<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/11.png"><br>12、将bin文件夹粘贴到软件安装路径下（第9步设置的路径）,点击“替换目标中的文件”<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/12.png"><br>12、双击图标，运行软件<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/13.png"><br>13、安装完毕<br><img src="/2024/10/24/%E7%AC%AC%E4%B9%9D%E7%AF%87/14.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Others </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Tools </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>TEA系列算法入门</title>
       <link href="/2024/10/17/%E7%AC%AC%E5%85%AB%E7%AF%87/"/>
       <url>/2024/10/17/%E7%AC%AC%E5%85%AB%E7%AF%87/</url>
@@ -77,6 +160,8 @@
             <tag> Reverse </tag>
             
             <tag> IDA </tag>
+            
+            <tag> 网鼎杯 </tag>
             
             <tag> Ponce </tag>
             
