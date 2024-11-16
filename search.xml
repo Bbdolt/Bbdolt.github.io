@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>我的第一个Github项目-Bilibili_fetcher</title>
+      <link href="/2024/11/16/%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87/"/>
+      <url>/2024/11/16/%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87/</url>
+      
+        <content type="html"><![CDATA[<h4 id="Bilibili-fetcher"><a href="#Bilibili-fetcher" class="headerlink" title="Bilibili_fetcher"></a>Bilibili_fetcher</h4><p>B站资源免费获取、提供在线播放音乐、本地播放音乐</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">搜索功能：输入关键词，右方窗口会出现搜索结果，双击可以将其复制到视频链接中。</span><br><span class="line"></span><br><span class="line">视频链接：可以自己输入也可以通过双击右边搜索结果，将其复制到视频链接中。</span><br><span class="line"></span><br><span class="line">Cookie：输入一次后会保存在./Cookie/Cookie.txt文件中，下次打开软件时会自动读取。</span><br><span class="line">        如果文件中有未过期的Cookie，就会自动添加不用输入，有的话输入框会显示灰色</span><br><span class="line">        如果文件中没有Cookie，则需要输入（会有提醒）。没有Cookie的情况下下载的</span><br><span class="line">        视频只能是360P，反之就是 1080P。</span><br><span class="line">        </span><br><span class="line">保存路径：可以指定输出路径，默认在当前目录下的相应子目录。</span><br><span class="line"></span><br><span class="line">三个选择框：可以选择下载视频、音频（默认）、图片。</span><br><span class="line"></span><br><span class="line">下载：点击后会开始下载，下载完成后会弹出提示。</span><br><span class="line"></span><br><span class="line">在线播放：点击可以在线播放当前连接音乐，有些音频并不支持。</span><br><span class="line"></span><br><span class="line">本地播放：点击后选择MP3文件所在目录，然后就会显示该目录下的所有mp3文件（根据</span><br><span class="line">此可以创建不同的文件夹放不同类型的歌曲也就是不同的歌单，），可以双击一首开</span><br><span class="line">始播放，有循环和顺序播放两种默认模式是顺序播放。</span><br><span class="line"></span><br></pre></td></tr></table></figure><h4 id="功能展示"><a href="#功能展示" class="headerlink" title="功能展示"></a>功能展示</h4><p>主界面<br><img src="/2024/11/16/%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87/1.png"><br>本地播放<br><img src="/2024/11/16/%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87/2.png"><br>在线播放<br><img src="/2024/11/16/%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87/3.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> github </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> bilibili_fetcher </tag>
+            
+            <tag> python爬虫 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>网鼎杯2024 revers1（four）</title>
       <link href="/2024/11/10/%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AF%87/"/>
       <url>/2024/11/10/%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AF%87/</url>
