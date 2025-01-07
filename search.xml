@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title>逆向脱壳</title>
+      <link href="/2025/01/07/17/"/>
+      <url>/2025/01/07/17/</url>
+      
+        <content type="html"><![CDATA[<h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><h4 id="壳的类型"><a href="#壳的类型" class="headerlink" title="壳的类型"></a>壳的类型</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">压缩壳：压缩的目的是减少程序体积，如 ASPack、UPX、PECompact 等；</span><br><span class="line">加密壳：加密是为了防止程序被反编译（反汇编）、跟踪和调试，如 ASProtect、Armadillo、 EXECryptor、Themida、VMProtect。</span><br></pre></td></tr></table></figure><h4 id="加壳代码执行"><a href="#加壳代码执行" class="headerlink" title="加壳代码执行"></a>加壳代码执行</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1、保存入口参数</span><br><span class="line">加壳程序在初始化时会保存个寄存器的值，待外壳执行完毕后，再恢复各寄存器的内容，最后跳到原程序执行。通常用 pushad/popad、pushfd/popfd 指令对来保存与恢复现场环境。（pushad 用来保存所有通用寄存器的状态，而 pushfd 仅用来保存标志寄存器的状态，一般在 32 位中使用）</span><br><span class="line"></span><br><span class="line">2、获取壳本身需要使用的API地址</span><br><span class="line">在一般情况下，外壳的输入表中只有 GetProAddress、GetModuleHandle和 LoadLibrary 这3个API函数。甚至只有 Kernel32.dll 及 GetProcAddress。如果需要使用其他 API 函数，可以通过函数LoadLibraryA(W) 或 LoadLibraryExA(W) 将 DLL 文件映射调用进程的地址空间，函数返回的HINSTANCE 值用于表示文件映像所映射的虚拟内存地址。</span><br></pre></td></tr></table></figure><p><img src="/2025/01/07/17/1.png"></p><h4 id="壳代码的基本流程"><a href="#壳代码的基本流程" class="headerlink" title="壳代码的基本流程"></a>壳代码的基本流程</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">（1）保存寄存器环境 pushad pushfd</span><br><span class="line">（2）获取 API 函数的地址，加载一些必要的 API</span><br><span class="line">（3）解密代码和数据</span><br><span class="line">（4）填充 IAT</span><br><span class="line">（5）修复重定位</span><br><span class="line">（6）恢复寄存器环境 popad popfd</span><br><span class="line">（7）可能会进行大跳转到 OEP</span><br></pre></td></tr></table></figure><h4 id="断点类型"><a href="#断点类型" class="headerlink" title="断点类型"></a>断点类型</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">1、INT3断点（软件断点）：</span><br><span class="line">利用 F2 设置的断点就是 INT3 断点，打INT3断点的时候，断点处就会被CCh（INT3指令的机器码）替换。以OD为例当我们在某一汇编指令处设下INT3断点后，调试器会把所设断点地址处的第一个字节改为0xCC（即INT3指令），并把原字节保存。之所以我们看起来OD的此地址处字节没有发生任何变化是因为OD为了维持汇编代码的可读性并没有将改变后的指令进行重新反汇编。</span><br><span class="line"></span><br><span class="line">- 优点：数量没有限制，操作简单。</span><br><span class="line">- 缺点：因为改变机器码所以易被检测，只能在代码段中使用，而且因为其是基于中断的所以当中断描述符表被破坏时其将无效</span><br><span class="line"></span><br><span class="line">2、硬件断点</span><br><span class="line">使用4个调试寄存器 DR0，DR1，DR2，DR3，设置地址，使用一个寄存器DR7设定状态，最多设置4个硬件断点，通过寄存器来记录需要中断的位置，可以分为：访问中断、写入中断、执行中断。</span><br><span class="line"></span><br><span class="line">- 优点：速度比较快，在INT3断点容易被发现的地方使用硬件断点</span><br><span class="line">— 缺点：数量有限</span><br><span class="line"></span><br><span class="line">3、内存断点</span><br><span class="line">内存断点实际上是改变了一个内存区域或一个内存页的权限。内存断点的实现方式是将你欲下断地址所在的内存页增加一个名为PAGE_NOACCESS的属性，这个属性会把当前内存页设为禁止任何形式的访问，如果进行访问会触发一个内存访问异常。</span><br><span class="line"></span><br><span class="line">补充：</span><br><span class="line">1.内存断点很消耗资源，因为PAGE_NOACCESS属性一设置就是一整个内存页无法访问，那么当程序访问该内存页中非断点地址的内容同样会触发异常。</span><br><span class="line">    2.虽然内存断点的效率经常很不理想，但是因为仅仅是修改了一个内存属性，所以内存断点可以下数量非常多、单断点范围非常大。这是它的优势。</span><br><span class="line">    3.只在写入时断下的内存断点通常是将内存属性设为PAGE_EXECUTE_READ，也就是不可写来实现的。对这种属性的内存进行写操作将会触发异常。</span><br></pre></td></tr></table></figure><h3 id="正片开始"><a href="#正片开始" class="headerlink" title="正片开始"></a>正片开始</h3><ul><li>单步跟踪法</li><li>ESP定律</li><li>内存访问断点<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、单步跟踪法</span><br><span class="line">  主要用到 F8 与 F4</span><br><span class="line"></span><br><span class="line">2、ESP定律</span><br><span class="line">  ESP定律简单来说就是堆栈平衡，有进栈就要有出栈</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">3、内存访问断点</span><br><span class="line">  壳做的事就是将加密或压缩的代码复原也就是对 .text 段的写入，如果我们对.text 段下了内存断点，那么中断的时候 .text 代码可能还没有完全写入，就需要不停地按 F9，另一种方法是再 .rsrc 段下断点，当发生中断时说明 .text 代码已经恢复完成了，这时候再在 .text 上下断点，当可执行完成跳转到OEP时就会停下来。</span><br></pre></td></tr></table></figure></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Reverse </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Reverse </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>十分钟教你如何去除花指令</title>
+      <link href="/2025/01/07/16/"/>
+      <url>/2025/01/07/16/</url>
+      
+        <content type="html"><![CDATA[<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  花指令又名垃圾代码、脏字节，英文名是junk code。花指令就是在不影响程序运行的情况下，往真实代码中插入一些垃圾代码，从而影响反汇编器的正常运行；或是起到干扰逆向分析人员的静态分析，增加分析难度和分析时间。</span><br><span class="line"></span><br><span class="line">0xe9：jmp</span><br><span class="line">0xe8：call</span><br><span class="line">0x90：nop</span><br><span class="line"></span><br><span class="line">call xxx 相当于 push eip;jmp xxx;</span><br><span class="line">retn 相当于 ret 相当于 pop eip; 跳转到 eip</span><br></pre></td></tr></table></figure><h4 id="常用的两类反汇编算法"><a href="#常用的两类反汇编算法" class="headerlink" title="常用的两类反汇编算法"></a>常用的两类反汇编算法</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.线性扫描算法：逐行反汇编（无法将数据和内容进行区分）  </span><br><span class="line">2.递归行进算法：按照代码可能的执行顺序进行反汇编程序。</span><br></pre></td></tr></table></figure><h4 id="花指令的识别"><a href="#花指令的识别" class="headerlink" title="花指令的识别"></a>花指令的识别</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. call目的地址畸形</span><br><span class="line">2. 跳转到某条指令的中间，IDA中形如地址+x的样子</span><br><span class="line">3. 大量不常见、不合理的指令（由于反汇编错位而出现）</span><br><span class="line"></span><br><span class="line">但反汇编错误并不意味着花指令，还可能是SMC（代码自解密）</span><br></pre></td></tr></table></figure><h4 id="常见花指令"><a href="#常见花指令" class="headerlink" title="常见花指令"></a>常见花指令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、jx 配合 jnx     </span><br><span class="line">2、call 配合 pop    </span><br><span class="line">3、call 配合 add esp, 4</span><br><span class="line">4、call 配合 add [esp], n 配合 retn</span><br></pre></td></tr></table></figure><p><a href="https://www.bilibili.com/video/BV1WorUYWEgB">视频链接</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Reverse </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Reverse </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>图书管理系统【附源码】</title>
       <link href="/2025/01/04/%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AF%87/"/>
       <url>/2025/01/04/%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AF%87/</url>
